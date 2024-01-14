@@ -1,6 +1,7 @@
 import 'package:expense_tracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/expense.dart';
+import 'package:flutter/rendering.dart';
 
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key, required this.onAddExpense});
@@ -82,93 +83,239 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 40, 16, 16),
-      child: Column(
-        children: [
-          TextField(
-            maxLength: 50,
-            controller: _titleController,
-            decoration: const InputDecoration(
-              label: Text('Title'),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  maxLength: 50,
-                  keyboardType: TextInputType.number,
-                  controller: _amountController,
-                  decoration: const InputDecoration(
-                    prefixText: '\$ ',
-                    label: Text('Amount'),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(_selectedDate == null
-                        ? 'select a Date'
-                        : formFormatter.format(
-                            _selectedDate!)), //we can force dart by using ! to say it will not be null
-                    IconButton(
-                        onPressed: _presentDatePicker,
-                        icon: Icon(Icons.calendar_month_sharp))
-                  ],
-                ),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              DropdownButton(
-                  value: _selectedCategory,
-                  items: Category.values
-                      .map(
-                        (category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(
-                            category.name.toUpperCase(),
+    return LayoutBuilder(builder: (ctx, constraints) {
+      final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+      final width = constraints.maxWidth;
+      if (width >= 600) {
+        return SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 40, 16, keyboardSpace + 16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          maxLength: 50,
+                          autocorrect: true,
+                          controller: _titleController,
+                          decoration: const InputDecoration(
+                            label: Text('Title'),
                           ),
                         ),
+                      ),
+                      //if()
+                      SizedBox(
+                        width: 310,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(_selectedDate == null
+                                ? 'select a Date'
+                                : formFormatter.format(
+                                    _selectedDate!)), //we can force dart by using ! to say it will not be null
+                            IconButton(
+                                onPressed: _presentDatePicker,
+                                icon: const Icon(Icons.calendar_month_sharp))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 310,
+                        child: Expanded(
+                          child: TextField(
+                            maxLength: 50,
+                            keyboardType: TextInputType.number,
+                            controller: _amountController,
+                            decoration: const InputDecoration(
+                              prefixText: '\$ ',
+                              label: Text('Amount'),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 200),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            child: DropdownButton(
+                                value: _selectedCategory,
+                                items: Category.values
+                                    .map(
+                                      (category) => DropdownMenuItem(
+                                        value: category,
+                                        child: Center(
+                                          child: Text(
+                                            category.name.toUpperCase(),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) {
+                                  if (value == null) {
+                                    return;
+                                  }
+                                  setState(() {
+                                    _selectedCategory = value;
+                                  });
+                                }),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); //forward the context tot it;
+                        },
+                        child: Text('cancel',
+                            style: TextStyle(
+                                color: kColorScheme.onInverseSurface)),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _submitData();
+                        },
+                        child: Text('save Expense',
+                            style: TextStyle(
+                                color: kColorScheme.onInverseSurface)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      } else {
+        return SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 40, 16, keyboardSpace + 16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          maxLength: 50,
+                          autocorrect: true,
+                          controller: _titleController,
+                          decoration: const InputDecoration(
+                            label: Text('Title'),
+                          ),
+                        ),
+                      ),
+                      //if()
+                      //const SizedBox(width: 310),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          maxLength: 50,
+                          keyboardType: TextInputType.number,
+                          controller: _amountController,
+                          decoration: const InputDecoration(
+                            prefixText: '\$ ',
+                            label: Text('Amount'),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(_selectedDate == null
+                                ? 'select a Date'
+                                : formFormatter.format(
+                                    _selectedDate!)), //we can force dart by using ! to say it will not be null
+                            IconButton(
+                                onPressed: _presentDatePicker,
+                                icon: Icon(Icons.calendar_month_sharp))
+                          ],
+                        ),
                       )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) {
-                      return;
-                    }
-                    setState(() {
-                      _selectedCategory = value;
-                    });
-                    ;
-                  }),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); //forward the context tot it;
-                },
-                child: Text('cancel',style: TextStyle(color: kColorScheme.onInverseSurface)),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      DropdownButton(
+                          value: _selectedCategory,
+                          items: Category.values
+                              .map(
+                                (category) => DropdownMenuItem(
+                                  value: category,
+                                  child: Text(
+                                    category.name.toUpperCase(),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            if (value == null) {
+                              return;
+                            }
+                            setState(() {
+                              _selectedCategory = value;
+                            });
+                            ;
+                          }),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); //forward the context tot it;
+                        },
+                        child: Text('cancel',
+                            style: TextStyle(
+                                color: kColorScheme.onInverseSurface)),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _submitData();
+                        },
+                        child: Text('save Expense',
+                            style: TextStyle(
+                                color: kColorScheme.onInverseSurface)),
+                      ),
+                    ],
+                  )
+                ],
               ),
-              const SizedBox(width: 4,),
-              ElevatedButton(
-                onPressed: () {
-                  _submitData();
-                },
-                child: Text('save Expense',style: TextStyle(color: kColorScheme.onInverseSurface)),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+            ),
+          ),
+        );
+      }
+    });
   }
 }
