@@ -1,3 +1,4 @@
+import 'package:expense_tracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/expense.dart';
 
@@ -155,13 +156,14 @@ class _NewExpenseState extends State<NewExpense> {
                 onPressed: () {
                   Navigator.pop(context); //forward the context tot it;
                 },
-                child: const Text('cancel'),
+                child: Text('cancel',style: TextStyle(color: kColorScheme.onInverseSurface)),
               ),
+              const SizedBox(width: 4,),
               ElevatedButton(
                 onPressed: () {
                   _submitData();
                 },
-                child: const Text('save Expense'),
+                child: Text('save Expense',style: TextStyle(color: kColorScheme.onInverseSurface)),
               ),
             ],
           )
